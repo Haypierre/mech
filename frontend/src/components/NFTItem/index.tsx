@@ -1,3 +1,4 @@
+import { useState } from "react"
 import classes from "./NFTItem.module.css"
 import { shortenAddress } from "../../utils/shortenAddress"
 import copy from "copy-to-clipboard"
@@ -15,6 +16,9 @@ import { AccountNftGrid } from "../NFTGrid"
 import NFTMedia from "../NFTMedia"
 import { Link } from "react-router-dom"
 
+import Button from "../Button"
+import SendERC20Popup from "../SendERC20Popup"
+
 interface Props {
   nft: MoralisNFT
   chainId: number
@@ -23,6 +27,11 @@ interface Props {
 const NFTItem: React.FC<Props> = ({ nft, chainId }) => {
   const mechAddress = calculateMechAddress(getNFTContext(nft), chainId)
   const operatorAddress = nft.owner_of
+  const [showPopup, setShowPopup] = useState(false)
+
+  const openSendPopup = () => {
+    setShowPopup((prev) => !prev)
+  }
 
   const {
     data,
@@ -122,7 +131,25 @@ const NFTItem: React.FC<Props> = ({ nft, chainId }) => {
               <div className={classes.assetName}>
                 <img src={balance.logo} alt={`logo for ${balance.name}`} />
                 <div>{balance.name}</div>
+                <div className={classes.button}>
+                  <Button
+                    onClick={openSendPopup}
+                    secondary
+                    className={clsx(classes.button)}
+                  >
+                    SEND
+                  </Button>
+                  <></>
+                </div>
               </div>
+              {showPopup && (
+                <SendERC20Popup
+                  mechAddress={mechAddress}
+                  tokenAddress={balance.token_address}
+                  balance={balance.balance}
+                  decimals={balance.decimals}
+                />
+              )}
               <div className={classes.value}>
                 <p>
                   {formatUnits(BigInt(balance.balance), balance.decimals || 0)}

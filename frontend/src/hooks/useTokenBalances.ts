@@ -47,6 +47,7 @@ const useTokenBalances = ({ accountAddress, chainId }: Props) => {
         }
         const nativeJson = await nativeRes.json()
         const nativeData = {
+          token_address: nativeJson.token_address,
           balance: nativeJson.balance as string,
           decimals: CHAINS[chainId].nativeCurrency.decimals,
           name: CHAINS[chainId].nativeCurrency.name,
